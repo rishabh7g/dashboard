@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<meta name="theme-color" content="#0f0f0f">
+<title>Dashboard</title>
+
+<!-- Inline PWA Manifest -->
+<script>
+  const manifest = {
+    name: "Dashboard",
+    short_name: "Dashboard",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#0f0f0f",
+    theme_color: "#0f0f0f",
+    icons: [
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E💪%3C/text%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = url;
+  document.head.appendChild(link);
+</script>
+
+<!-- Apple touch icon (inline SVG) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E💪%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #2e2e2e;
+    --text: #f0f0f0;
+    --text2: #999;
+    --accent: #e8ff3c;
+    --warn: #ff9500;
+    --green: #34c759;
+    --blue: #0a84ff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  header {
+    padding: calc(env(safe-area-inset-top, 20px) + 16px) 20px 16px;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text2);
+  }
+
+  .date-label {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .workout-title {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text2);
+  }
+
+  .badge.accent {
+    background: var(--accent);
+    color: #0f0f0f;
+  }
+
+  .content {
+    padding: 16px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    margin: 24px 0 10px;
+  }
+
+  .exercise-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .exercise-name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .exercise-meta {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  .exercise-note {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .exercise-warn {
+    font-size: 12px;
+    color: var(--warn);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .exercise-cap {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  .cap-value {
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .rest-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+
+  .rest-emoji { font-size: 52px; }
+
+  .rest-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 12px;
+  }
+
+  .rest-subtitle {
+    font-size: 14px;
+    color: var(--text2);
+    margin-top: 6px;
+  }
+
+  .run-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .run-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .run-stat {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .run-stat-label {
+    font-size: 11px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .run-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 3px;
+    color: var(--accent);
+  }
+
+  .run-stat-unit {
+    font-size: 12px;
+    color: var(--text2);
+    font-weight: 400;
+  }
+
+  .principles-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+
+  .principle {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .principle:last-child { border-bottom: none; }
+
+  .stairmaster-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stairmaster-icon { font-size: 24px; }
+
+  .stairmaster-text {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .stairmaster-sub {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 1px;
+  }
+
+  .core-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--blue);
+  }
+
+  .core-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+
+  .core-item {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 3px 0;
+  }
+
+  .no-schedule {
+    padding: 60px 20px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div style="padding:40px;text-align:center;color:#666">Loading...</div>
+</div>
+
+<script>
+// ─── Schedule ──────────────────────────────────────────────────────────────
+const SCHEDULE = {
+  "2026-05-23": { type: "running" },
+  "2026-05-24": { type: "running" },
+  "2026-05-25": { type: "rest" },
+  "2026-05-26": { type: "legs-hamstrings", variation: "A" },
+  "2026-05-27": { type: "back", variation: "A" },
+  "2026-05-28": { type: "arms-triceps", variation: "A" },
+  "2026-05-29": { type: "shoulders", variation: "A" },
+  "2026-05-30": { type: "running" },
+  "2026-05-31": { type: "running" },
+  "2026-06-01": { type: "rest" },
+  "2026-06-02": { type: "legs-quads", variation: "B" },
+  "2026-06-03": { type: "chest", variation: "B" },
+  "2026-06-04": { type: "arms-biceps", variation: "B" },
+  "2026-06-05": { type: "shoulders", variation: "B" },
+  "2026-06-06": { type: "running" },
+  "2026-06-07": { type: "running" },
+  "2026-06-08": { type: "rest" },
+  "2026-06-09": { type: "legs-hamstrings", variation: "B" },
+  "2026-06-10": { type: "back", variation: "B" },
+  "2026-06-11": { type: "arms-triceps", variation: "B" },
+  "2026-06-12": { type: "shoulders", variation: "B" },
+  "2026-06-13": { type: "running" },
+  "2026-06-14": { type: "running" },
+  "2026-06-15": { type: "rest" },
+  "2026-06-16": { type: "legs-quads", variation: "A" },
+  "2026-06-17": { type: "chest", variation: "A" },
+  "2026-06-18": { type: "arms-biceps", variation: "A" },
+  "2026-06-19": { type: "shoulders", variation: "A" },
+  "2026-06-20": { type: "running" },
+  "2026-06-21": { type: "running" },
+  "2026-06-22": { type: "rest" },
+  "2026-06-23": { type: "legs-hamstrings", variation: "A" },
+  "2026-06-24": { type: "back", variation: "A" },
+  "2026-06-25": { type: "arms-triceps", variation: "A" },
+  "2026-06-26": { type: "shoulders", variation: "A" },
+  "2026-06-27": { type: "running" },
+  "2026-06-28": { type: "running" },
+  "2026-06-29": { type: "rest" },
+  "2026-06-30": { type: "legs-quads", variation: "B" },
+  "2026-07-01": { type: "chest", variation: "B" },
+  "2026-07-02": { type: "arms-biceps", variation: "B" },
+  "2026-07-03": { type: "shoulders", variation: "B" },
+  "2026-07-04": { type: "running" },
+  "2026-07-05": { type: "running" },
+  "2026-07-06": { type: "rest" },
+  "2026-07-07": { type: "legs-hamstrings", variation: "B" },
+  "2026-07-08": { type: "back", variation: "B" },
+  "2026-07-09": { type: "arms-triceps", variation: "B" },
+  "2026-07-10": { type: "shoulders", variation: "B" },
+  "2026-07-11": { type: "running" },
+  "2026-07-12": { type: "running" },
+  "2026-07-13": { type: "rest" },
+  "2026-07-14": { type: "legs-quads", variation: "A" },
+  "2026-07-15": { type: "chest", variation: "A" },
+  "2026-07-16": { type: "arms-biceps", variation: "A" },
+  "2026-07-17": { type: "shoulders", variation: "A" },
+  "2026-07-18": { type: "running" },
+  "2026-07-19": { type: "running" },
+  "2026-07-20": { type: "rest" },
+  "2026-07-21": { type: "legs-hamstrings", variation: "A" },
+  "2026-07-22": { type: "back", variation: "A" },
+  "2026-07-23": { type: "arms-triceps", variation: "A" },
+  "2026-07-24": { type: "shoulders", variation: "A" },
+  "2026-07-25": { type: "running" },
+  "2026-07-26": { type: "running" },
+  "2026-07-27": { type: "rest" },
+  "2026-07-28": { type: "legs-quads", variation: "B" },
+  "2026-07-29": { type: "chest", variation: "B" },
+  "2026-07-30": { type: "arms-biceps", variation: "B" },
+  "2026-07-31": { type: "shoulders", variation: "B" },
+  "2026-08-01": { type: "running" },
+  "2026-08-02": { type: "running" },
+  "2026-08-03": { type: "rest" },
+  "2026-08-04": { type: "legs-hamstrings", variation: "B" },
+  "2026-08-05": { type: "back", variation: "B" },
+  "2026-08-06": { type: "arms-triceps", variation: "B" },
+  "2026-08-07": { type: "shoulders", variation: "B" },
+  "2026-08-08": { type: "running" },
+  "2026-08-09": { type: "running" },
+  "2026-08-10": { type: "rest" },
+  "2026-08-11": { type: "legs-quads", variation: "A" },
+  "2026-08-12": { type: "chest", variation: "A" },
+  "2026-08-13": { type: "arms-biceps", variation: "A" },
+  "2026-08-14": { type: "shoulders", variation: "A" },
+  "2026-08-15": { type: "running" },
+  "2026-08-16": { type: "running" },
+  "2026-08-17": { type: "rest" },
+  "2026-08-18": { type: "legs-hamstrings", variation: "A" },
+  "2026-08-19": { type: "back", variation: "A" },
+  "2026-08-20": { type: "arms-triceps", variation: "A" },
+  "2026-08-21": { type: "shoulders", variation: "A" },
+  "2026-08-22": { type: "running" },
+  "2026-08-23": { type: "running" },
+  "2026-08-24": { type: "rest" },
+  "2026-08-25": { type: "legs-quads", variation: "B" },
+  "2026-08-26": { type: "chest", variation: "B" },
+  "2026-08-27": { type: "arms-biceps", variation: "B" },
+  "2026-08-28": { type: "shoulders", variation: "B" },
+  "2026-08-29": { type: "running" },
+  "2026-08-30": { type: "running" },
+  "2026-08-31": { type: "rest" },
+  "2026-09-01": { type: "legs-hamstrings", variation: "B" },
+  "2026-09-02": { type: "back", variation: "B" },
+  "2026-09-03": { type: "arms-triceps", variation: "B" },
+  "2026-09-04": { type: "shoulders", variation: "B" },
+  "2026-09-05": { type: "running" },
+  "2026-09-06": { type: "running" },
+  "2026-09-07": { type: "rest" },
+  "2026-09-08": { type: "legs-quads", variation: "A" },
+  "2026-09-09": { type: "chest", variation: "A" },
+  "2026-09-10": { type: "arms-biceps", variation: "A" },
+  "2026-09-11": { type: "shoulders", variation: "A" },
+  "2026-09-12": { type: "running" },
+  "2026-09-13": { type: "running" },
+  "2026-09-14": { type: "rest" },
+  "2026-09-15": { type: "legs-hamstrings", variation: "A" },
+  "2026-09-16": { type: "back", variation: "A" },
+  "2026-09-17": { type: "arms-triceps", variation: "A" },
+  "2026-09-18": { type: "shoulders", variation: "A" },
+  "2026-09-19": { type: "running" },
+  "2026-09-20": { type: "running" },
+  "2026-09-21": { type: "rest" },
+  "2026-09-22": { type: "legs-quads", variation: "B" },
+  "2026-09-23": { type: "chest", variation: "B" },
+  "2026-09-24": { type: "arms-biceps", variation: "B" },
+  "2026-09-25": { type: "shoulders", variation: "B" },
+  "2026-09-26": { type: "running" },
+  "2026-09-27": { type: "running" },
+  "2026-09-28": { type: "rest" },
+  "2026-09-29": { type: "legs-hamstrings", variation: "B" },
+  "2026-09-30": { type: "back", variation: "B" },
+  "2026-10-01": { type: "arms-triceps", variation: "B" },
+  "2026-10-02": { type: "shoulders", variation: "B" },
+  "2026-10-03": { type: "running" },
+  "2026-10-04": { type: "running" },
+  "2026-10-05": { type: "rest" },
+  "2026-10-06": { type: "legs-quads", variation: "A" },
+  "2026-10-07": { type: "chest", variation: "A" },
+  "2026-10-08": { type: "arms-biceps", variation: "A" },
+  "2026-10-09": { type: "shoulders", variation: "A" },
+  "2026-10-10": { type: "running" },
+  "2026-10-11": { type: "running" },
+  "2026-10-12": { type: "rest" },
+  "2026-10-13": { type: "legs-hamstrings", variation: "A" },
+  "2026-10-14": { type: "back", variation: "A" },
+  "2026-10-15": { type: "arms-triceps", variation: "A" },
+  "2026-10-16": { type: "shoulders", variation: "A" },
+  "2026-10-17": { type: "running" },
+  "2026-10-18": { type: "running" },
+  "2026-10-19": { type: "rest" },
+  "2026-10-20": { type: "legs-quads", variation: "B" },
+  "2026-10-21": { type: "chest", variation: "B" },
+  "2026-10-22": { type: "arms-biceps", variation: "B" },
+  "2026-10-23": { type: "shoulders", variation: "B" },
+  "2026-10-24": { type: "running" },
+  "2026-10-25": { type: "running" },
+  "2026-10-26": { type: "rest" },
+  "2026-10-27": { type: "legs-hamstrings", variation: "B" },
+  "2026-10-28": { type: "back", variation: "B" },
+  "2026-10-29": { type: "arms-triceps", variation: "B" },
+  "2026-10-30": { type: "shoulders", variation: "B" },
+  "2026-10-31": { type: "running" },
+  "2026-11-01": { type: "running" },
+  "2026-11-02": { type: "rest" },
+  "2026-11-03": { type: "legs-quads", variation: "A" },
+  "2026-11-04": { type: "chest", variation: "A" },
+  "2026-11-05": { type: "arms-biceps", variation: "A" },
+  "2026-11-06": { type: "shoulders", variation: "A" },
+  "2026-11-07": { type: "running" },
+  "2026-11-08": { type: "running" },
+  "2026-11-09": { type: "rest" },
+  "2026-11-10": { type: "legs-hamstrings", variation: "A" },
+  "2026-11-11": { type: "back", variation: "A" },
+  "2026-11-12": { type: "arms-triceps", variation: "A" },
+  "2026-11-13": { type: "shoulders", variation: "A" },
+  "2026-11-14": { type: "running" },
+  "2026-11-15": { type: "running" },
+  "2026-11-16": { type: "rest" },
+  "2026-11-17": { type: "legs-quads", variation: "B" },
+  "2026-11-18": { type: "chest", variation: "B" },
+  "2026-11-19": { type: "arms-biceps", variation: "B" },
+  "2026-11-20": { type: "shoulders", variation: "B" },
+  "2026-11-21": { type: "running" },
+  "2026-11-22": { type: "running" },
+};
+
+// ─── Exercise Database ──────────────────────────────────────────────────────
+const CORE = [
+  { name: "Hanging leg raise", sets: 3, reps: 10 },
+  { name: "Hanging knee raise", sets: 3, reps: 12 },
+  { name: "Kneeling cable crunch", sets: 3, reps: 15, note: "Rope behind head, hands facing down — crunch by contracting abs, not pulling with arms" },
+];
+
+const WORKOUTS = {
+  "legs-quads": {
+    A: {
+      title: "Legs — Quads",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Squats", sets: 3, reps: 10, weight: "15kg/side", cap: "60kg total (bar + plates)", warn: "Beyond this thickens spinal erectors" },
+        { name: "Hack squat", sets: 3, reps: 12, cap: "80kg total" },
+        { name: "Leg press", sets: 3, reps: 12, note: "Feet LOW = quads", cap: "80kg total" },
+        { name: "Leg extension", sets: 3, reps: 12, weight: "20–25kg", note: "Slow lowering" },
+      ]
+    },
+    B: {
+      title: "Legs — Quads",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Goblet squat", sets: 3, reps: 12 },
+        { name: "Walking lunges", sets: 3, reps: "10 each leg", note: "With dumbbells", cap: "10kg per dumbbell", warn: "Heavy lunges bulk glutes and widen hips" },
+        { name: "Hack squat", sets: 3, reps: 12, cap: "80kg total" },
+      ]
+    }
+  },
+  "legs-hamstrings": {
+    A: {
+      title: "Legs — Hamstrings",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Squats", sets: 3, reps: 10, weight: "15kg/side", cap: "60kg total (bar + plates)", warn: "Beyond this thickens spinal erectors" },
+        { name: "Romanian deadlift", sets: 3, reps: 10, cap: "20kg/side (40kg total)" },
+        { name: "Leg press", sets: 3, reps: 12, note: "Feet HIGH = hamstrings", cap: "100kg total" },
+        { name: "Lying leg curl", sets: 3, reps: 12, weight: "32–40kg" },
+      ]
+    },
+    B: {
+      title: "Legs — Hamstrings",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Romanian deadlift", sets: 3, reps: 10, cap: "20kg/side (40kg total)" },
+        { name: "Walking lunges", sets: 3, reps: "10 each leg", note: "With dumbbells", cap: "10kg per dumbbell", warn: "Heavy lunges bulk glutes and widen hips" },
+        { name: "Lying leg curl", sets: 3, reps: 12, weight: "32–40kg" },
+      ]
+    }
+  },
+  "chest": {
+    A: {
+      title: "Chest + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Push-ups", sets: 3, reps: 12 },
+        { name: "Incline dumbbell press", sets: 3, reps: 10, weight: "10kg", cap: "14kg", warn: "Chest size is not your V-shape lever" },
+        { name: "High cable fly", sets: 3, reps: 12 },
+        { name: "Mid cable fly", sets: 3, reps: 12 },
+        { name: "Side lateral raises", sets: 3, reps: 15, weight: "5kg" },
+      ]
+    },
+    B: {
+      title: "Chest + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Push-ups", sets: 3, reps: 15 },
+        { name: "Flat dumbbell press", sets: 3, reps: 10, cap: "14kg" },
+        { name: "Incline cable fly", sets: 3, reps: 12 },
+        { name: "Incline dumbbell fly", sets: 3, reps: 12, cap: "12kg" },
+        { name: "Side lateral raises", sets: 3, reps: 15, weight: "5kg" },
+      ]
+    }
+  },
+  "back": {
+    A: {
+      title: "Back + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Pull-ups", sets: 3, reps: "7→10", note: "No cap — add weight progressively. Primary lat width builder." },
+        { name: "Straight-arm pulldown", sets: 3, reps: 12 },
+        { name: "Reverse pec deck", sets: 3, reps: 12 },
+        { name: "Seated cable row", sets: 3, reps: 10, weight: "25–30kg", cap: "40kg", warn: "Beyond this recruits traps for thickness, not lats for width" },
+        { name: "Side lateral raises", sets: 3, reps: 15, weight: "5kg" },
+      ]
+    },
+    B: {
+      title: "Back + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Lat pulldown (wide grip)", sets: 3, reps: 10, note: "No cap — progress freely. Builds lat width." },
+        { name: "Single arm dumbbell row", sets: 3, reps: "10 each side" },
+        { name: "Cable face pull", sets: 3, reps: 15 },
+        { name: "Wide grip seated cable row", sets: 3, reps: 10, cap: "40kg", warn: "Beyond this recruits traps for thickness, not lats for width" },
+        { name: "Side lateral raises", sets: 3, reps: 15, weight: "5kg" },
+      ]
+    }
+  },
+  "arms-biceps": {
+    A: {
+      title: "Arms — Biceps",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Pull-ups", sets: 3, reps: "max" },
+        { name: "Cable curl", sets: 3, reps: 12, weight: "15kg" },
+        { name: "Reverse cable curl", sets: 3, reps: 12, weight: "10kg" },
+        { name: "Incline dumbbell curl", sets: 3, reps: 10, weight: "7–8kg" },
+      ]
+    },
+    B: {
+      title: "Arms — Biceps",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Hammer curl", sets: 3, reps: 12, weight: "8–10kg" },
+        { name: "Preacher curl", sets: 3, reps: 12 },
+        { name: "Concentration curl", sets: 3, reps: 12, weight: "6–8kg" },
+        { name: "Cable curl (rope attachment)", sets: 3, reps: 12 },
+      ]
+    }
+  },
+  "arms-triceps": {
+    A: {
+      title: "Arms — Triceps",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Cable pushdown", sets: 3, reps: 12 },
+        { name: "Single-hand pushdown", sets: 3, reps: 12 },
+        { name: "Overhead cable extension", sets: 3, reps: 12 },
+      ]
+    },
+    B: {
+      title: "Arms — Triceps",
+      hasStairmaster: true,
+      exercises: [
+        { name: "Skull crushers (EZ bar)", sets: 3, reps: 12 },
+        { name: "Close grip push-ups", sets: 3, reps: 15 },
+        { name: "Dumbbell overhead tricep extension", sets: 3, reps: 12 },
+      ]
+    }
+  },
+  "shoulders": {
+    A: {
+      title: "Shoulders + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Side lateral raises ⭐ FIRST", sets: 4, reps: 15, weight: "5kg", note: "Strict form — do NOT increase weight" },
+        { name: "Dumbbell shoulder press", sets: 3, reps: 10, weight: "8–10kg", cap: "12kg", warn: "Heavier shifts load to front delts and traps" },
+        { name: "Lying cable face pull", sets: 3, reps: 15, note: "Rope. Lie on floor/bench, head close to stack, pull toward face with elbows flaring wide" },
+        { name: "Side lateral raises (burnout)", sets: 2, reps: 20, weight: "3–4kg" },
+      ]
+    },
+    B: {
+      title: "Shoulders + Core",
+      hasCore: true,
+      exercises: [
+        { name: "Side lateral raises ⭐ FIRST", sets: 4, reps: 15, weight: "5kg", note: "Strict form — do NOT increase weight" },
+        { name: "Seated dumbbell lateral raise", sets: 3, reps: 12, cap: "6kg", note: "Strict isolation, zero trap involvement" },
+        { name: "Unilateral cable lateral raise", sets: 3, reps: "12 each side" },
+        { name: "Bent-over rear delt fly", sets: 3, reps: 15 },
+        { name: "Side lateral raises (burnout)", sets: 2, reps: 20, weight: "3–4kg" },
+      ]
+    }
+  }
+};
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function formatDate(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-AU', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
+
+function getWeekType(type) {
+  if (['chest', 'legs-quads', 'arms-biceps'].includes(type)) return 'Front Week';
+  if (['back', 'legs-hamstrings', 'arms-triceps', 'shoulders'].includes(type)) return 'Back Week';
+  return '';
+}
+
+function exCard(ex) {
+  return `
+    <div class="exercise-card">
+      <div class="exercise-name">${ex.name}</div>
+      <div class="exercise-meta">${ex.sets} × ${ex.reps}${ex.weight ? ' · ' + ex.weight : ''}</div>
+      ${ex.note  ? `<div class="exercise-note">${ex.note}</div>` : ''}
+      ${ex.cap   ? `<div class="exercise-cap">Cap: <span class="cap-value">${ex.cap}</span></div>` : ''}
+      ${ex.warn  ? `<div class="exercise-warn">⚠️ ${ex.warn}</div>` : ''}
+    </div>`;
+}
+
+function coreHTML() {
+  return `<div class="core-card">
+    <div class="core-title">Core (every session)</div>
+    ${CORE.map(ex => `<div class="core-item">${ex.name} ${ex.sets}×${ex.reps}${ex.note ? `<div class="exercise-note" style="margin-top:2px">${ex.note}</div>` : ''}</div>`).join('')}
+  </div>`;
+}
+
+function stairmasterHTML() {
+  return `<div class="stairmaster-card">
+    <div class="stairmaster-icon">🪜</div>
+    <div>
+      <div class="stairmaster-text">Stairmaster · 15 min</div>
+      <div class="stairmaster-sub">30lb vest</div>
+    </div>
+  </div>`;
+}
+
+// ─── Render ─────────────────────────────────────────────────────────────────
+function render() {
+  const key = todayKey();
+  const entry = SCHEDULE[key];
+  const dateStr = formatDate(key);
+  const app = document.getElementById('app');
+
+  if (!entry) {
+    app.innerHTML = `
+      <header>
+        <div class="app-name">Dashboard</div>
+        <div class="date-label">${dateStr}</div>
+        <div class="workout-title">No workout today</div>
+      </header>
+      <div class="content">
+        <div class="no-schedule" style="color:var(--text2)">
+          <div style="font-size:48px">📅</div>
+          <div style="margin-top:12px">This date is outside the current program (May 23 – Nov 22, 2026).</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (entry.type === 'rest') {
+    app.innerHTML = `
+      <header>
+        <div class="app-name">Dashboard</div>
+        <div class="date-label">${dateStr}</div>
+        <div class="workout-title">Rest Day</div>
+      </header>
+      <div class="content">
+        <div class="rest-card" style="margin-top:16px">
+          <div class="rest-emoji">😴</div>
+          <div class="rest-title">Rest & Recover</div>
+          <div class="rest-subtitle">Sleep well. Let the muscles rebuild.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (entry.type === 'running') {
+    app.innerHTML = `
+      <header>
+        <div class="app-name">Dashboard</div>
+        <div class="date-label">${dateStr}</div>
+        <div class="workout-title">Running 🏃</div>
+        <div class="badge-row">
+          <span class="badge accent">4.8 km</span>
+          <span class="badge">400m track · Lane 3</span>
+        </div>
+      </header>
+      <div class="content">
+        <div class="run-card" style="margin-top:16px">
+          <div class="run-stats">
+            <div class="run-stat">
+              <div class="run-stat-label">Distance</div>
+              <div class="run-stat-value">4.8<span class="run-stat-unit"> km</span></div>
+            </div>
+            <div class="run-stat">
+              <div class="run-stat-label">Laps</div>
+              <div class="run-stat-value">~12<span class="run-stat-unit"> laps</span></div>
+            </div>
+            <div class="run-stat">
+              <div class="run-stat-label">Target</div>
+              <div class="run-stat-value" style="font-size:16px">28–30<span class="run-stat-unit"> min</span></div>
+            </div>
+            <div class="run-stat">
+              <div class="run-stat-label">Pre-run</div>
+              <div class="run-stat-value" style="font-size:28px">🍌</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const workout = WORKOUTS[entry.type]?.[entry.variation];
+  if (!workout) return;
+
+  app.innerHTML = `
+    <header>
+      <div class="app-name">Dashboard</div>
+      <div class="date-label">${dateStr}</div>
+      <div class="workout-title">${workout.title}</div>
+      <div class="badge-row">
+        <span class="badge accent">Variation ${entry.variation}</span>
+        <span class="badge">${getWeekType(entry.type)}</span>
+      </div>
+    </header>
+    <div class="content">
+      <div class="section-label">Exercises</div>
+      ${workout.exercises.map(exCard).join('')}
+      ${workout.hasCore ? coreHTML() : ''}
+      ${workout.hasStairmaster ? `<div class="section-label">Cardio</div>${stairmasterHTML()}` : ''}
+      <div class="section-label">Principles</div>
+      <div class="principles-card">
+        <div class="principle">Add weight before reps — +2.5kg when 12 reps feels easy</div>
+        <div class="principle">Rest 60–90s isolation · 2 min compounds</div>
+        ${workout.hasCore ? '<div class="principle">Side lateral raises non-negotiable — form over weight, always</div>' : ''}
+        <div class="principle">No shrugs · no weighted side bends · no heavy deadlifts</div>
+      </div>
+      <div style="height:40px"></div>
+    </div>`;
+}
+
+render();
+</script>
+</body>
+</html>
