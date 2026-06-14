@@ -735,7 +735,13 @@ function buildItemList(workout) {
   }
 
   if (workout.hasRun) {
-    add('drills', 'Drills session', '30 min', { note: 'Content TBD — your picks' });
+    if (workout.drills) {
+      for (const d of workout.drills) {
+        add('drills', d.name, d.reps, { note: d.note });
+      }
+    } else {
+      add('drills', 'Drills session', '30 min', { note: 'Content TBD — your picks' });
+    }
     add('run', 'Run — lanes 9→4', '6 lanes descending', { note: '🍌 Banana before · duration = time taken' });
   }
 
@@ -1269,11 +1275,24 @@ const WORKOUTS = {
   }
 };
 
+const DRILLS = [
+  { name: 'High knees', reps: '1 length' },
+  { name: 'Walk → back kicks (cone to cone)', reps: '1 length' },
+  { name: 'Sideways walk left + right → back', reps: '1 length' },
+  { name: 'Backward walk + Frankenstein leg swing', reps: '1 length' },
+  { name: 'Hip circles (light jog outside)', reps: '1 length' },
+  { name: 'Side ankle touch outside', reps: '1 length' },
+  { name: 'Side frog jumps', reps: '1 length' },
+  { name: 'Suicide runs', reps: '30m → 20m → 10m', note: '3 rounds' },
+  { name: 'Sideways shuffles', reps: '1 length' },
+];
+
 const RUNNING_DAYS = {
   running: {
     A: {
       title: 'Running Day — Saturday',
       hasRun: true,
+      drills: DRILLS,
       stretching: [
         { name: 'Light jog / shuttle jog', reps: '1 min' },
         { name: 'Ankle circles, both directions', reps: '10 each foot' },
@@ -1298,6 +1317,7 @@ const RUNNING_DAYS = {
     B: {
       title: 'Running Day — Saturday',
       hasRun: true,
+      drills: DRILLS,
       stretching: [
         { name: 'Light jog', reps: '1 min' },
         { name: 'Inchworm walkouts', reps: '5 reps' },
@@ -1324,6 +1344,7 @@ const RUNNING_DAYS = {
     A: {
       title: 'Running Day — Sunday',
       hasRun: true,
+      drills: DRILLS,
       stretching: [
         { name: 'Brisk walk / light jog', reps: '1–2 min' },
         { name: 'Arm circles, forward/backward', reps: '10 each direction' },
@@ -1348,6 +1369,7 @@ const RUNNING_DAYS = {
     B: {
       title: 'Running Day — Sunday',
       hasRun: true,
+      drills: DRILLS,
       stretching: [
         { name: 'Brisk walk / light jog', reps: '1–2 min' },
         { name: 'Shoulder rolls + arm swings', reps: '10 reps' },
