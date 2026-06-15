@@ -10,17 +10,23 @@
 
 // ─── PWA manifest (built at runtime so the whole app stays self-contained) ──
 const manifest = {
-  name: "Dashboard",
-  short_name: "Dashboard",
-  start_url: ".",
-  display: "standalone",
-  background_color: "#0f0f0f",
-  theme_color: "#0f0f0f",
-  icons: [
-    { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml" }
-  ]
+	name: 'Dashboard',
+	short_name: 'Dashboard',
+	start_url: '.',
+	display: 'standalone',
+	background_color: '#0f0f0f',
+	theme_color: '#0f0f0f',
+	icons: [
+		{
+			src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",
+			sizes: '512x512',
+			type: 'image/svg+xml',
+		},
+	],
 };
-const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+const manifestBlob = new Blob([JSON.stringify(manifest)], {
+	type: 'application/json',
+});
 const manifestLink = document.createElement('link');
 manifestLink.rel = 'manifest';
 manifestLink.href = URL.createObjectURL(manifestBlob);
@@ -31,5 +37,5 @@ render();
 
 // ─── Service Worker (offline support) ────────────────────────────────────────
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+	navigator.serviceWorker.register('./sw.js').catch(() => {});
 }

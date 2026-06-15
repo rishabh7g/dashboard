@@ -15,25 +15,33 @@
 // These are plain top-level `let`s in a classic script, so they form a single
 // shared binding every other script can read and write.
 let completedItems = new Set(); // ids of items ticked done today
-let allItems = [];              // the full ordered item list for today
-let cachedKey = null;           // today's date key, so saveState knows where to write
+let allItems = []; // the full ordered item list for today
+let cachedKey = null; // today's date key, so saveState knows where to write
 
 // ─── Per-day completion ─────────────────────────────────────────────────────
 function saveState(key) {
-  try { localStorage.setItem('ws-' + key, JSON.stringify([...completedItems])); } catch(e) {}
+	try {
+		localStorage.setItem('ws-' + key, JSON.stringify([...completedItems]));
+	} catch (e) {}
 }
 function loadState(key) {
-  try {
-    const s = localStorage.getItem('ws-' + key);
-    if (s) return new Set(JSON.parse(s));
-  } catch(e) {}
-  return new Set();
+	try {
+		const s = localStorage.getItem('ws-' + key);
+		if (s) return new Set(JSON.parse(s));
+	} catch (e) {}
+	return new Set();
 }
 
 // ─── Day borrow ("follow a different day") ──────────────────────────────────
 function loadBorrows() {
-  try { return JSON.parse(localStorage.getItem('day-borrow') || '{}'); } catch(e) { return {}; }
+	try {
+		return JSON.parse(localStorage.getItem('day-borrow') || '{}');
+	} catch (e) {
+		return {};
+	}
 }
 function saveBorrows(b) {
-  try { localStorage.setItem('day-borrow', JSON.stringify(b)); } catch(e) {}
+	try {
+		localStorage.setItem('day-borrow', JSON.stringify(b));
+	} catch (e) {}
 }

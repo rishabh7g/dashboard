@@ -1,37 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dashboard">
-<meta name="theme-color" content="#0f0f0f">
-<title>Dashboard</title>
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, viewport-fit=cover"
+		/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta
+			name="apple-mobile-web-app-status-bar-style"
+			content="black-translucent"
+		/>
+		<meta name="apple-mobile-web-app-title" content="Dashboard" />
+		<meta name="theme-color" content="#0f0f0f" />
+		<title>Dashboard</title>
 
-<!-- Home-screen icon (the PWA manifest itself is built in js/main.js) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E">
+		<!-- Home-screen icon (the PWA manifest itself is built in js/main.js) -->
+		<link
+			rel="apple-touch-icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230f0f0f'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='280' font-family='system-ui'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E"
+		/>
 
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+	<body>
+		<!-- The whole UI is rendered into this single mount point by js/ui.js render() -->
+		<div id="app"></div>
 
-<!-- The whole UI is rendered into this single mount point by js/ui.js render() -->
-<div id="app"></div>
+		<!-- Bottom sheet for "follow a different day". Hidden until openSwapSheet() shows it. -->
+		<div
+			id="swap-sheet-overlay"
+			style="display: none"
+			class="swap-sheet-overlay"
+			onclick="closeSwapSheet()"
+		>
+			<div class="swap-sheet" onclick="event.stopPropagation()">
+				<div class="swap-sheet-handle"></div>
+				<div class="swap-sheet-header">
+					<div class="swap-sheet-title">
+						Follow a different day's workout
+					</div>
+					<div class="swap-sheet-sub">
+						Today's schedule is unchanged — you're just following
+						this one instead
+					</div>
+				</div>
+				<div id="swap-options"></div>
+			</div>
+		</div>
 
-<!-- Bottom sheet for "follow a different day". Hidden until openSwapSheet() shows it. -->
-<div id="swap-sheet-overlay" style="display:none" class="swap-sheet-overlay" onclick="closeSwapSheet()">
-  <div class="swap-sheet" onclick="event.stopPropagation()">
-    <div class="swap-sheet-handle"></div>
-    <div class="swap-sheet-header">
-      <div class="swap-sheet-title">Follow a different day's workout</div>
-      <div class="swap-sheet-sub">Today's schedule is unchanged — you're just following this one instead</div>
-    </div>
-    <div id="swap-options"></div>
-  </div>
-</div>
-
-<!--
+		<!--
   Scripts load in dependency order (classic scripts share one global scope):
     data    → the constants everything reads
     storage → localStorage + shared session state
@@ -39,11 +57,10 @@
     ui      → builds HTML and handles clicks
     main    → bootstraps: manifest, first render, service worker
 -->
-<script src="js/data.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/workout.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/main.js"></script>
-
-</body>
+		<script src="js/data.js"></script>
+		<script src="js/storage.js"></script>
+		<script src="js/workout.js"></script>
+		<script src="js/ui.js"></script>
+		<script src="js/main.js"></script>
+	</body>
 </html>
